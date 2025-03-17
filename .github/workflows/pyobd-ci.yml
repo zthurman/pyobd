@@ -23,11 +23,10 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: |
-            "3.10"
-            "3.11"
-            "3.12"
-            "3.13"
+          python-version: "3.10"
+            #"3.11"
+            #"3.12"
+            #"3.13"
       #- name: Install dependencies for OS
       - name: List dir contents
         run: ls -al
@@ -47,11 +46,10 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: |
-            "3.10"
-            "3.11"
-            "3.12"
-            "3.13"
+          python-version: "3.10"
+            #"3.11"
+            #"3.12"
+            #"3.13"
       #- name: Install dependencies for OS
       #  run: |
       #    apt-get update
@@ -72,11 +70,10 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: |
-            "3.10"
-            "3.11"
-            "3.12"
-            "3.13"
+          python-version: "3.10"
+            #"3.11"
+            #"3.12"
+            #"3.13"
       #- name: Install dependencies for OS
       #  run: |
       #    pacman -Syu
