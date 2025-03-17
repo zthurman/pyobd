@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Set up Python 3.10
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+        uses: actions/setup-python@v5
         with:
           python-version: |
             "3.10"
@@ -43,8 +43,9 @@ jobs:
     container: ubuntu 
 
     steps:
+      - name: Set up Python 3.10
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+        uses: actions/setup-python@v5
         with:
           python-version: |
             "3.10"
@@ -67,8 +68,9 @@ jobs:
     container: archlinux 
 
     steps:
+      - name: Set up Python 3.10
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+        uses: actions/setup-python@v5
         with:
           python-version: |
             "3.10"
