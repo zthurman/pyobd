@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies for OS
         run: |
           apt-get update
-          apt-get install -y build-essential python-dev libgtk-3-dev
+          apt-get install -y build-essential python3-dev libgtk-3-dev
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
@@ -106,6 +106,7 @@ jobs:
         run: python -m venv venv
       - name: Install requirements
         run: |
+          dir
           ./venv/bin/pip install setuptools
           ./venv/bin/pip install -r requirements.txt --verbose
   
