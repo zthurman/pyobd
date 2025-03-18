@@ -75,7 +75,7 @@ jobs:
       - name: Install dependencies for OS
         run: |
           pacman -Syu
-          pacman -Syu -y gcc make gtk3
+          pacman -Syu --noconfirm gcc make gtk3
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
