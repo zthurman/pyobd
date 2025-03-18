@@ -29,11 +29,11 @@ jobs:
             #"3.13"
       - name: Install dependencies for OS
         run: |
-          dnf install -y make gcc gtk3-devel
+          dnf install -y make automake gcc gcc-c++ kernel-devel
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
-        run: ./venv/bin/pip install -r requirements.txt
+        run: ./venv/bin/pip install -r requirements.txt --verbose
   
   build-ubuntu:
 
@@ -52,11 +52,11 @@ jobs:
       - name: Install dependencies for OS
         run: |
           apt-get update
-          apt-get install -y gcc make gtk3
+          apt-get install -y build-essential libgtk3-devel
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
-        run: ./venv/bin/pip install -r requirements.txt
+        run: ./venv/bin/pip install -r requirements.txt --verbose
   
   build-arch:
 
@@ -75,8 +75,8 @@ jobs:
       - name: Install dependencies for OS
         run: |
           pacman -Syu
-          pacman -Syu --noconfirm gcc make gtk3
+          pacman -Syu --noconfirm base-devel gtk3
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
-        run: ./venv/bin/pip install -r requirements.txt
+        run: ./venv/bin/pip install -r requirements.txt --verbose
