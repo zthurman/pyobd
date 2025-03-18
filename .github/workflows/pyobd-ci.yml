@@ -106,8 +106,7 @@ jobs:
         run: python -m venv venv
       - name: Install requirements
         run: |
-          dir
-          ./venv/bin/pip install setuptools
+          dir ./venv/bin
           ./venv/bin/pip install -r requirements.txt --verbose
   
   build-macos:
