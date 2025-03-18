@@ -28,7 +28,7 @@ jobs:
             #"3.12"
             #"3.13"
       - name: Install dependencies for OS
-	run: dnf install -y gcc make gtk3
+	run: dnf install -y make gcc
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
