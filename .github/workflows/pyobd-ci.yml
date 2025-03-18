@@ -29,8 +29,7 @@ jobs:
             #"3.13"
       - name: Install dependencies for OS
         run: |
-          dnf update
-          dnf install -y make gcc
+          dnf install -y make gcc gtk3-devel
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
@@ -50,10 +49,10 @@ jobs:
             #"3.11"
             #"3.12"
             #"3.13"
-      #- name: Install dependencies for OS
-      #  run: |
-      #    apt-get update
-      #    apt-get install -y gcc make gtk3
+      - name: Install dependencies for OS
+        run: |
+          apt-get update
+          apt-get install -y gcc make gtk3
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
@@ -73,10 +72,10 @@ jobs:
             #"3.11"
             #"3.12"
             #"3.13"
-      #- name: Install dependencies for OS
-      #  run: |
-      #    pacman -Syu
-      #    pacman -Syu -y gcc make gtk3
+      - name: Install dependencies for OS
+        run: |
+          pacman -Syu
+          pacman -Syu -y gcc make gtk3
       - name: Create venv
         run: python -m venv venv
       - name: Install requirements
