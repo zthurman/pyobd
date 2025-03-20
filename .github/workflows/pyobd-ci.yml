@@ -36,6 +36,10 @@ jobs:
       - name: Install requirements
         run: |
           ./venv/bin/pip install -r requirements.txt --verbose
+      - name: Run tests 
+        run: |
+          source ./venv/bin/activate
+          python -m unittest
   
   build-archlinux:
 
