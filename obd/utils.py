@@ -147,7 +147,7 @@ def contiguous(l, start, end):
     return True
 
 
-def try_port(portStr):
+def try_port(portStr, debugOutput=True):
     """returns boolean for port availability"""
     try:
         s = serial.Serial(portStr)
@@ -155,7 +155,8 @@ def try_port(portStr):
         return True
 
     except serial.SerialException as err:
-        logging.error(err)
+        if debugOutput:
+            logging.error(err)
     except OSError as e:
         if e.errno != errno.ENOENT:  # permit "no such file or directory" errors
             raise e
@@ -163,7 +164,7 @@ def try_port(portStr):
     return False
 
 
-def scan_serial():
+def scan_serial(debugOutput=True):
     """scan for available ports. return a list of serial names"""
     available = []
 
@@ -191,7 +192,9 @@ def scan_serial():
     # possible_ports += glob.glob('/dev/pts/[0-9]*') # for obdsim
 
     for port in possible_ports:
-        if try_port(port):
+        if try_port(port, debugOutput=debugOutput):
             available.append(port)
-    print('Available ports: '+str(available))
+
+    if debugOutput:
+        print('Available ports: '+str(available))
     return available

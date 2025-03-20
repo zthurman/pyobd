@@ -72,7 +72,6 @@ class LegacyProtocol(Protocol):
         # exclude header and trailing checksum (handled by ELM adapter)
         frame.data = raw_bytes[3:-1]
 
-
         # read header information
         frame.priority = raw_bytes[0]
         frame.rx_id = raw_bytes[1]
@@ -114,7 +113,9 @@ class LegacyProtocol(Protocol):
             # 48 6B 10 43 03 04 00 00 00 00 ck
             #             [     Data      ]
 
-            message.data = bytearray([0x43, 0x00])  # forge the mode byte and CAN's DTC_count byte
+            message.data = bytearray(
+                [0x43, 0x00]
+            )  # forge the mode byte and CAN's DTC_count byte
             for f in frames:
                 message.data += f.data[1:]
 
