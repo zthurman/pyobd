@@ -14,31 +14,6 @@ permissions:
 
 jobs:
 
-  build-fedora:
-
-    runs-on: ubuntu-latest
-    container: fedora
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install dependencies for OS
-        run: |
-          dnf install -y make automake gcc gcc-c++ kernel-devel python3.10-devel gtk3-devel
-          dnf install -y gstreamer1-devel webkit2gtk3-devel libjpeg-devel libpng-devel
-          dnf install -y libtiff-devel SDL libnotify-devel libSM-devel
-      - name: Create venv
-        run: python -m venv venv
-      - name: Install requirements
-        run: |
-          which which
-          unset -f which
-          ./venv/bin/pip install setuptools
-          ./venv/bin/pip install -r requirements.txt --verbose
-  
   build-ubuntu:
 
     runs-on: ubuntu-latest
