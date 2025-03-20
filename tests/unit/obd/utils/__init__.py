@@ -36,9 +36,22 @@ class TestBitArray(TestCase):
 
 class TestBytesToInt(TestCase):
     @given(st.binary(min_size=2, max_size=256))
-    def testBytesToInt(self, b):
-        validate = int.from_bytes(b, byteorder='big')
+    def testBytesToIntSuccess(self, b):
+        validate = int.from_bytes(b, byteorder="big")
         self.assertEqual(utils.bytes_to_int(b), validate)
+    
+    @given(st.binary(min_size=2, max_size=256))
+    def testBytesToIntFail(self, b):
+        validate = int.from_bytes(b, byteorder="little")
+        """
+        It doesn't look like the hypothesis binary
+        strategy will let us exclude zero as a value.
+        For that trivial case, we'll fail to fail.
+        Other than that, we succeed on failing when
+        our validator has the wrong byte order.
+        """
+        if validate > 0:
+            self.assertNotEqual(utils.bytes_to_int(b), validate)
 
 
 class TestBytesToHex(TestCase):
