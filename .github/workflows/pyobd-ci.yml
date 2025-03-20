@@ -54,7 +54,7 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies for OS
         run: |
-          pacman -Syu
+          pacman -Syu --noconfirm
           pacman -Syu --noconfirm base-devel gtk3 freeglut libpng libjpeg-turbo
           pacman -Syu --noconfirm sdl3 libtiff libnotify libsm gstreamer
       - name: Create venv
