@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-	A serial module for accessing data from a vehicles OBD-II port
+A serial module for accessing data from a vehicles OBD-II port
 
-	For more documentation, visit:
-	http://python-obd.readthedocs.org/en/latest/
+For more documentation, visit:
+http://python-obd.readthedocs.org/en/latest/
 """
 
 ########################################################################

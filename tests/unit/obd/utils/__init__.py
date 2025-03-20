@@ -35,6 +35,7 @@ class MockSerialObjectWithClose:
     doesn't actually have to do
     anything.
     """
+
     def close(self):
         pass
 
@@ -53,20 +54,20 @@ class TestTryPort(TestCase):
 
 
 def all_items_match_regexes(item_list, regex_list):
-  """
-  Checks if all items in a list match at least one regex in a list of regexes.
+    """
+    Checks if all items in a list match at least one regex in a list of regexes.
 
-  Args:
-    item_list: A list of strings to check.
-    regex_list: A list of regex patterns.
+    Args:
+      item_list: A list of strings to check.
+      regex_list: A list of regex patterns.
 
-  Returns:
-    True if all items match at least one regex, False otherwise.
-  """
-  for item in item_list:
-    if not any(re.search(regex, item) for regex in regex_list):
-      return False
-  return True
+    Returns:
+      True if all items match at least one regex, False otherwise.
+    """
+    for item in item_list:
+        if not any(re.search(regex, item) for regex in regex_list):
+            return False
+    return True
 
 
 class TestScanSerial(TestCase):
@@ -75,38 +76,39 @@ class TestScanSerial(TestCase):
             "/dev/rfcomm[0-9]*",
             "/dev/ttyUSB[0-9]*",
             "/dev/ttyS[0-9]*",
-            "/dev/ttyACM[0-9]*"
+            "/dev/ttyACM[0-9]*",
         ]
-        self.win32_port_regexes = [
-                "COM%d" % i for i in range(256)
-        ]
-        
-        self.mac_port_regexes = [
-            "/dev/tty.*(?=[^B][^l])"
-        ]
+        self.win32_port_regexes = ["COM%d" % i for i in range(256)]
+        # Negative lookahead for the Bluetooth ones we're excluding
+        self.mac_port_regexes = ["/dev/tty.*(?=[^B][^l])"]
 
     def test_scan_serial_success(self):
         test = utils.scan_serial(debugOutput=False)
         self.assertIsInstance(test, list)
-
 
     def test_scan_serial_linux(self):
         if sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()
                 test = utils.scan_serial(debugOutput=False)
-                self.assertEqual(all_items_match_regexes(test, self.linux_port_regexes), True)
-    
+                self.assertEqual(
+                    all_items_match_regexes(test, self.linux_port_regexes), True
+                )
+
     def test_scan_serial_win(self):
         if sys.platform.startswith("win"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()
                 test = utils.scan_serial(debugOutput=False)
-                self.assertEqual(all_items_match_regexes(test, self.win32_port_regexes), True)
-    
+                self.assertEqual(
+                    all_items_match_regexes(test, self.win32_port_regexes), True
+                )
+
     def test_scan_serial_mac(self):
         if sys.platform.startswith("darwin"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()
                 test = utils.scan_serial(debugOutput=False)
-                self.assertEqual(all_items_match_regexes(test, self.mac_port_regexes), True)
+                self.assertEqual(
+                    all_items_match_regexes(test, self.mac_port_regexes), True
+                )
