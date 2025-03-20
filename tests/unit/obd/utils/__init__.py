@@ -3,7 +3,9 @@ import sys
 import re
 from unittest import TestCase
 from unittest.mock import patch
+from hypothesis import given, strategies as st
 
+# Unit Under Test
 import obd.utils as utils
 
 
@@ -15,25 +17,39 @@ class TestOBDStatus(TestCase):
     def setUp(self):
         self.status = utils.OBDStatus()
 
-    def test_NotConnected(self):
+    def testNotConnected(self):
         self.assertEqual(self.status.NOT_CONNECTED, "Not Connected")
 
-    def test_ELMConnected(self):
+    def testELMConnected(self):
         self.assertEqual(self.status.ELM_CONNECTED, "ELM Connected")
 
-    def test_OBDConnected(self):
+    def testOBDConnected(self):
         self.assertEqual(self.status.OBD_CONNECTED, "OBD Connected")
 
-    def test_CarConnected(self):
+    def testCarConnected(self):
         self.assertEqual(self.status.CAR_CONNECTED, "Car Connected")
+
+
+class TestBitArray(TestCase):
+    pass
+
+
+class TestBytesToInt(TestCase):
+    @given(st.binary(min_size=2, max_size=256))
+    def testBytesToInt(self, b):
+        validate = int.from_bytes(b, byteorder='big')
+        self.assertEqual(utils.bytes_to_int(b), validate)
+
+
+class TestBytesToHex(TestCase):
+    pass
 
 
 class MockSerialObjectWithClose:
     """
-    To test try_port we just need an
-    object that can close(). Close
-    doesn't actually have to do
-    anything.
+    To test `try_port` we just need an
+    object that can close(). Close doesn't
+    actually have to do anything.
     """
 
     def close(self):
@@ -44,10 +60,10 @@ class TestTryPort(TestCase):
     def setUp(self):
         self.portName = "bogustestport"
 
-    def test_try_port_fail(self):
+    def testTryPortFail(self):
         self.assertEqual(utils.try_port(self.portName, debugOutput=False), False)
 
-    def test_try_port_success(self):
+    def testTryPortSuccess(self):
         with patch("serial.Serial") as mocked_port:
             mocked_port.return_value = MockSerialObjectWithClose()
             self.assertEqual(utils.try_port(self.portName, debugOutput=False), True)
@@ -71,6 +87,13 @@ def all_items_match_regexes(item_list, regex_list):
 
 
 class TestScanSerial(TestCase):
+    """
+    Mildly irritating that patching sys.platform
+    isn't as simple as it is for everything else.
+    As it is, we can fallback on CI to execute
+    each test case for us as long as we spin up
+    a test on each platform and everything passes.
+    """
     def setUp(self):
         self.linux_port_regexes = [
             "/dev/rfcomm[0-9]*",
@@ -82,11 +105,11 @@ class TestScanSerial(TestCase):
         # Negative lookahead for the Bluetooth ones we're excluding
         self.mac_port_regexes = ["/dev/tty.*(?=[^B][^l])"]
 
-    def test_scan_serial_success(self):
+    def testScanSerialSuccess(self):
         test = utils.scan_serial(debugOutput=False)
         self.assertIsInstance(test, list)
 
-    def test_scan_serial_linux(self):
+    def testScanSerialLinux(self):
         if sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()
@@ -95,7 +118,7 @@ class TestScanSerial(TestCase):
                     all_items_match_regexes(test, self.linux_port_regexes), True
                 )
 
-    def test_scan_serial_win(self):
+    def testScanSerialWin(self):
         if sys.platform.startswith("win"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()
@@ -104,7 +127,7 @@ class TestScanSerial(TestCase):
                     all_items_match_regexes(test, self.win32_port_regexes), True
                 )
 
-    def test_scan_serial_mac(self):
+    def testScanSerialMac(self):
         if sys.platform.startswith("darwin"):
             with patch("serial.Serial") as mocked_port:
                 mocked_port.return_value = MockSerialObjectWithClose()

@@ -102,7 +102,13 @@ class BitArray:
 
 
 def bytes_to_int(bs):
-    """ converts a big-endian byte array into a single integer """
+    """
+    converts a big-endian byte array into a single integer
+    TODO: Can we just do this instead?
+
+        `return int.from_bytes(bs, byteorder='big')`
+
+    """
     v = 0
     p = 0
     for b in reversed(bs):
@@ -120,7 +126,11 @@ def bytes_to_hex(bs):
 
 
 def twos_comp(val, num_bits):
-    """compute the 2's compliment of int value val"""
+    """
+    compute the 2's compliment of int value val
+    TODO: evaluate replacement with numpy.invert()
+    since its already a dependency.
+    """
     if ((val & (1 << (num_bits - 1))) != 0):
         val = val - (1 << num_bits)
     return val
