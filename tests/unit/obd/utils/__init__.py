@@ -27,10 +27,19 @@ class MockSerialObjectWithClose:
 
 
 class TestTryPort(TestCase):
+    def setUp(self):
+        self.portName = "testport"
+
     def test_try_port_fail(self):
-        self.assertEqual(utils.try_port("testport"), False)
+        self.assertEqual(utils.try_port(self.portName), False)
 
     def test_try_port_success(self):
         with patch("serial.Serial") as mocked_port:
             mocked_port.return_value = MockSerialObjectWithClose()
-            self.assertEqual(utils.try_port("testport"), True)
+            self.assertEqual(utils.try_port(self.portName), True)
+
+
+class TestScanSerial(TestCase):
+    def test_scan_serial_success(self):
+        test = utils.scan_serial()
+        self.assertIsInstance(test, list)
