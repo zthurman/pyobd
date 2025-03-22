@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class OBDStatus:
-    """ Values for the connection status flags """
+    """Values for the connection status flags"""
 
     NOT_CONNECTED = "Not Connected"
     ELM_CONNECTED = "ELM Connected"
@@ -106,7 +106,7 @@ def bytes_to_int(bs):
     v = 0
     p = 0
     for b in reversed(bs):
-        v += b * (2 ** p)
+        v += b * (2**p)
         p += 8
     return v
 
@@ -120,8 +120,12 @@ def bytes_to_hex(bs):
 
 
 def twos_comp(val, num_bits):
-    """compute the 2's compliment of int value val"""
-    if ((val & (1 << (num_bits - 1))) != 0):
+    """
+    compute the 2's compliment of int value val
+    TODO: evaluate replacement with numpy.invert()
+    since its already a dependency.
+    """
+    if (val & (1 << (num_bits - 1))) != 0:
         val = val - (1 << num_bits)
     return val
 
@@ -131,7 +135,7 @@ def isHex(_hex):
 
 
 def contiguous(l, start, end):
-    """ checks that a list of integers are consequtive """
+    """checks that a list of integers are consequtive"""
     if not l:
         return False
     if l[0] != start:
@@ -147,7 +151,7 @@ def contiguous(l, start, end):
     return True
 
 
-def try_port(portStr):
+def try_port(portStr, debugOutput=True):
     """returns boolean for port availability"""
     try:
         s = serial.Serial(portStr)
@@ -155,7 +159,8 @@ def try_port(portStr):
         return True
 
     except serial.SerialException as err:
-        logging.error(err)
+        if debugOutput:
+            logging.error(err)
     except OSError as e:
         if e.errno != errno.ENOENT:  # permit "no such file or directory" errors
             raise e
@@ -163,35 +168,39 @@ def try_port(portStr):
     return False
 
 
-def scan_serial():
+def scan_serial(debugOutput=True):
     """scan for available ports. return a list of serial names"""
     available = []
 
     possible_ports = []
 
-    if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    if sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
         possible_ports += glob.glob("/dev/rfcomm[0-9]*")
         possible_ports += glob.glob("/dev/ttyUSB[0-9]*")
         possible_ports += glob.glob("/dev/ttyS[0-9]*")
         possible_ports += glob.glob("/dev/ttyACM[0-9]*")
-        #possible_ports += glob.glob("/dev/pts/[0-9]*")  # for obdsim
-        
-    elif sys.platform.startswith('win'):
-        #possible_ports += ["\\.\COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
-        possible_ports += ["COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
+        # possible_ports += glob.glob("/dev/pts/[0-9]*")  # for obdsim
 
-    elif sys.platform.startswith('darwin'):
-        exclude = [
-            '/dev/tty.Bluetooth-Incoming-Port',
-            '/dev/tty.Bluetooth-Modem'
+    elif sys.platform.startswith("win"):
+        # possible_ports += ["\\.\COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
+        possible_ports += [
+            "COM%d" % i for i in range(256)
+        ]  # on win, the pseudo ports are also COM - harder to distinguish
+
+    elif sys.platform.startswith("darwin"):
+        exclude = ["/dev/tty.Bluetooth-Incoming-Port", "/dev/tty.Bluetooth-Modem"]
+        # possible_ports += glob.glob("/dev/ttys00[0-9]*")  # for obdsim
+        possible_ports += [
+            port for port in glob.glob("/dev/tty.*") if port not in exclude
         ]
-        #possible_ports += glob.glob("/dev/ttys00[0-9]*")  # for obdsim
-        possible_ports += [port for port in glob.glob('/dev/tty.*') if port not in exclude]
 
     # possible_ports += glob.glob('/dev/pts/[0-9]*') # for obdsim
 
     for port in possible_ports:
-        if try_port(port):
+        if try_port(port, debugOutput):
             available.append(port)
-    print('Available ports: '+str(available))
+
+    if debugOutput:
+        print("Available ports: " + str(available))
+
     return available
