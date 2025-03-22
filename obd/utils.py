@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class OBDStatus:
-    """ Values for the connection status flags """
+    """Values for the connection status flags"""
 
     NOT_CONNECTED = "Not Connected"
     ELM_CONNECTED = "ELM Connected"
@@ -112,7 +112,7 @@ def bytes_to_int(bs):
     v = 0
     p = 0
     for b in reversed(bs):
-        v += b * (2 ** p)
+        v += b * (2**p)
         p += 8
     return v
 
@@ -131,7 +131,7 @@ def twos_comp(val, num_bits):
     TODO: evaluate replacement with numpy.invert()
     since its already a dependency.
     """
-    if ((val & (1 << (num_bits - 1))) != 0):
+    if (val & (1 << (num_bits - 1))) != 0:
         val = val - (1 << num_bits)
     return val
 
@@ -141,7 +141,7 @@ def isHex(_hex):
 
 
 def contiguous(l, start, end):
-    """ checks that a list of integers are consequtive """
+    """checks that a list of integers are consequtive"""
     if not l:
         return False
     if l[0] != start:
@@ -180,24 +180,25 @@ def scan_serial(debugOutput=True):
 
     possible_ports = []
 
-    if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    if sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
         possible_ports += glob.glob("/dev/rfcomm[0-9]*")
         possible_ports += glob.glob("/dev/ttyUSB[0-9]*")
         possible_ports += glob.glob("/dev/ttyS[0-9]*")
         possible_ports += glob.glob("/dev/ttyACM[0-9]*")
-        #possible_ports += glob.glob("/dev/pts/[0-9]*")  # for obdsim
-        
-    elif sys.platform.startswith('win'):
-        #possible_ports += ["\\.\COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
-        possible_ports += ["COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
+        # possible_ports += glob.glob("/dev/pts/[0-9]*")  # for obdsim
 
-    elif sys.platform.startswith('darwin'):
-        exclude = [
-            '/dev/tty.Bluetooth-Incoming-Port',
-            '/dev/tty.Bluetooth-Modem'
+    elif sys.platform.startswith("win"):
+        # possible_ports += ["\\.\COM%d" % i for i in range(256)]  # on win, the pseudo ports are also COM - harder to distinguish
+        possible_ports += [
+            "COM%d" % i for i in range(256)
+        ]  # on win, the pseudo ports are also COM - harder to distinguish
+
+    elif sys.platform.startswith("darwin"):
+        exclude = ["/dev/tty.Bluetooth-Incoming-Port", "/dev/tty.Bluetooth-Modem"]
+        # possible_ports += glob.glob("/dev/ttys00[0-9]*")  # for obdsim
+        possible_ports += [
+            port for port in glob.glob("/dev/tty.*") if port not in exclude
         ]
-        #possible_ports += glob.glob("/dev/ttys00[0-9]*")  # for obdsim
-        possible_ports += [port for port in glob.glob('/dev/tty.*') if port not in exclude]
 
     # possible_ports += glob.glob('/dev/pts/[0-9]*') # for obdsim
 
@@ -206,5 +207,5 @@ def scan_serial(debugOutput=True):
             available.append(port)
 
     if debugOutput:
-        print('Available ports: '+str(available))
+        print("Available ports: " + str(available))
     return available

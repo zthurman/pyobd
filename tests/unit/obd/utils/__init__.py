@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import numpy as np
 from unittest import TestCase
 from unittest.mock import patch
 from hypothesis import given, strategies as st
@@ -35,12 +36,12 @@ class TestBitArray(TestCase):
 
 
 class TestBytesToInt(TestCase):
-    @given(st.binary(min_size=2, max_size=256))
+    @given(st.binary(min_size=3, max_size=1024))
     def testBytesToIntSuccess(self, b):
         validate = int.from_bytes(b, byteorder="big")
         self.assertEqual(utils.bytes_to_int(b), validate)
-    
-    @given(st.binary(min_size=2, max_size=256))
+
+    @given(st.binary(min_size=3, max_size=1024))
     def testBytesToIntFail(self, b):
         validate = int.from_bytes(b, byteorder="little")
         """
@@ -48,14 +49,48 @@ class TestBytesToInt(TestCase):
         strategy will let us exclude zero as a value.
         For that trivial case, we'll fail to fail.
         Other than that, we succeed on failing when
-        our validator has the wrong byte order.
+        our validator has the wrong byte order as 
+        long as our min_size is 3.
         """
         if validate > 0:
             self.assertNotEqual(utils.bytes_to_int(b), validate)
 
 
 class TestBytesToHex(TestCase):
-    pass
+    @given(st.binary(min_size=0, max_size=1024))
+    def testBytesToHex(self, b):
+        validate = b.hex()
+        self.assertEqual(utils.bytes_to_hex(b), validate)
+
+    # TODO: I can't think of a failure mode
+    # for bytes to hex that doesn't get caught
+    # above.
+    # def testBytesToHexFail(self, b):
+
+
+'''
+class TestTwosComp(TestCase):
+    def twos_complement(self, num, bits):
+        """
+        Calculates the two's complement of a number.
+
+        Args:
+            num: The integer for which to calculate the two's complement.
+            bits: The number of bits used to represent the number.
+
+        Returns:
+            The two's complement of the number as an integer.
+        """
+        if num >= 0:
+            return num
+        else:
+            return np.invert(np.uintc(-num) & (2**bits - 1)) + 1
+
+    @given(st.integers(min_value=-2147483648, max_value=2147483647))
+    def testTwosComp(self, i):
+        validate = self.twos_complement(i, i.bit_length())
+        self.assertEqual(utils.twos_comp(i, i.bit_length()), validate)
+'''
 
 
 class MockSerialObjectWithClose:
@@ -107,6 +142,7 @@ class TestScanSerial(TestCase):
     each test case for us as long as we spin up
     a test on each platform and everything passes.
     """
+
     def setUp(self):
         self.linux_port_regexes = [
             "/dev/rfcomm[0-9]*",
